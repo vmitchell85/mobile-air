@@ -100,6 +100,9 @@ import phpAdapter from '${adapterPath}';
 axios.defaults.adapter = phpAdapter;
 
 export default axios;
+export const isAxiosError = axios.isAxiosError;
+export const isCancel = axios.isCancel;
+export const mergeConfig = axios.mergeConfig;
 `;
                     }
                     return null;

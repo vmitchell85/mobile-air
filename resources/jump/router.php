@@ -24,6 +24,7 @@ $displayHost = getenv('JUMP_DISPLAY_HOST');
 $httpPort = getenv('JUMP_HTTP_PORT');
 $laravelPort = getenv('JUMP_LARAVEL_PORT') ?: 8000;
 $basePath = getenv('JUMP_BASE_PATH');
+$offlineMode = getenv('JUMP_OFFLINE_MODE') === '1';
 
 // Parse request FIRST - before loading any autoloaders
 $uri = $_SERVER['REQUEST_URI'];
@@ -143,14 +144,19 @@ if ($path === '/jump/qr' || $path === '/jump') {
 
         $qrCodeDataUri = $result->getDataUri();
 
-        // Check if we have the blade view available
-        $viewPath = __DIR__ . '/views/qr.blade.php';
+        // Generate HTML - use offline version if flag is set
+        global $offlineMode;
+        $viewFile = $offlineMode ? 'qr-offline.blade.php' : 'qr.blade.php';
+        $viewPath = __DIR__ . '/views/' . $viewFile;
+
         if (file_exists($viewPath)) {
-            // Simple variable substitution for the blade template
-            // We'll create a simplified HTML version instead of using Blade
-            $html = generateQrHtml($appName, $qrCodeDataUri, $displayHost, $httpPort);
+            // Read blade file and do simple variable substitution
+            $html = file_get_contents($viewPath);
+            $html = str_replace('{{ $qrCodeDataUri }}', $qrCodeDataUri, $html);
+            $html = str_replace('{{ $displayHost }}', $displayHost, $html);
+            $html = str_replace('{{ $port }}', $httpPort, $html);
         } else {
-            // Fallback: Generate minimal HTML
+            // Fallback to inline generator
             $html = generateQrHtml($appName, $qrCodeDataUri, $displayHost, $httpPort);
         }
 
