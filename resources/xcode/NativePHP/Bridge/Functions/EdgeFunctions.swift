@@ -1,4 +1,5 @@
 import Foundation
+import SwiftUI
 
 // MARK: - Edge Function Namespace
 
@@ -54,6 +55,101 @@ enum EdgeFunctions {
                 print("❌ Edge.Set: JSON serialization error: \(error)")
                 return ["error": "JSON serialization failed: \(error.localizedDescription)"]
             }
+        }
+    }
+
+    // MARK: - Navigation.OpenSidebar
+
+    /// Programmatically open the side navigation drawer
+    ///
+    /// Usage Example:
+    ///   nativephp_call('Navigation.OpenSidebar', '{}');
+    class OpenSidebar: BridgeFunction {
+        func execute(parameters: [String: Any]) throws -> [String: Any] {
+            print("🎨 Navigation.OpenSidebar called")
+
+            // Check if side nav exists
+            guard NativeUIState.shared.hasSideNav() else {
+                print("⚠️ Navigation.OpenSidebar: No side nav data available")
+                return ["success": false, "error": "No side nav data available"]
+            }
+
+            if Thread.isMainThread {
+                withAnimation(.easeInOut(duration: 0.3)) {
+                    NativeUIState.shared.openSidebar()
+                }
+            } else {
+                DispatchQueue.main.sync {
+                    withAnimation(.easeInOut(duration: 0.3)) {
+                        NativeUIState.shared.openSidebar()
+                    }
+                }
+            }
+
+            print("✅ Navigation.OpenSidebar: Sidebar opened")
+            return ["success": true]
+        }
+    }
+
+    // MARK: - Navigation.CloseSidebar
+
+    /// Programmatically close the side navigation drawer
+    ///
+    /// Usage Example:
+    ///   nativephp_call('Navigation.CloseSidebar', '{}');
+    class CloseSidebar: BridgeFunction {
+        func execute(parameters: [String: Any]) throws -> [String: Any] {
+            print("🎨 Navigation.CloseSidebar called")
+
+            if Thread.isMainThread {
+                withAnimation(.easeInOut(duration: 0.3)) {
+                    NativeUIState.shared.closeSidebar()
+                }
+            } else {
+                DispatchQueue.main.sync {
+                    withAnimation(.easeInOut(duration: 0.3)) {
+                        NativeUIState.shared.closeSidebar()
+                    }
+                }
+            }
+
+            print("✅ Navigation.CloseSidebar: Sidebar closed")
+            return ["success": true]
+        }
+    }
+
+    // MARK: - Navigation.ToggleSidebar
+
+    /// Toggle the side navigation drawer open/closed state
+    ///
+    /// Usage Example:
+    ///   nativephp_call('Navigation.ToggleSidebar', '{}');
+    class ToggleSidebar: BridgeFunction {
+        func execute(parameters: [String: Any]) throws -> [String: Any] {
+            print("🎨 Navigation.ToggleSidebar called")
+
+            // Check if side nav exists
+            guard NativeUIState.shared.hasSideNav() else {
+                print("⚠️ Navigation.ToggleSidebar: No side nav data available")
+                return ["success": false, "error": "No side nav data available"]
+            }
+
+            let willOpen = !NativeUIState.shared.shouldPresentSidebar
+
+            if Thread.isMainThread {
+                withAnimation(.easeInOut(duration: 0.3)) {
+                    NativeUIState.shared.shouldPresentSidebar.toggle()
+                }
+            } else {
+                DispatchQueue.main.sync {
+                    withAnimation(.easeInOut(duration: 0.3)) {
+                        NativeUIState.shared.shouldPresentSidebar.toggle()
+                    }
+                }
+            }
+
+            print("✅ Navigation.ToggleSidebar: Sidebar \(willOpen ? "opened" : "closed")")
+            return ["success": true]
         }
     }
 }

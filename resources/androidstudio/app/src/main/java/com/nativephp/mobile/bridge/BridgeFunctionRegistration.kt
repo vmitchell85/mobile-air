@@ -14,6 +14,11 @@ fun registerBridgeFunctions(activity: FragmentActivity, context: Context) {
 
     registry.register("Edge.Set", EdgeFunctions.Set())
 
+    // Navigation functions
+    registry.register("Navigation.OpenSidebar", EdgeFunctions.OpenSidebar())
+    registry.register("Navigation.CloseSidebar", EdgeFunctions.CloseSidebar())
+    registry.register("Navigation.ToggleSidebar", EdgeFunctions.ToggleSidebar())
+
     // Register plugin bridge functions
     registerPluginBridgeFunctions(activity, context)
 }
