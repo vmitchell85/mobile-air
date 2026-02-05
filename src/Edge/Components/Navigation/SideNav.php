@@ -24,4 +24,34 @@ class SideNav extends EdgeComponent
             'gestures_enabled' => $this->gesturesEnabled,
         ];
     }
+
+    /**
+     * Programmatically open the side navigation drawer.
+     */
+    public static function open(): void
+    {
+        if (function_exists('nativephp_call')) {
+            nativephp_call('Navigation.OpenSidebar', '{}');
+        }
+    }
+
+    /**
+     * Programmatically close the side navigation drawer.
+     */
+    public static function close(): void
+    {
+        if (function_exists('nativephp_call')) {
+            nativephp_call('Navigation.CloseSidebar', '{}');
+        }
+    }
+
+    /**
+     * Toggle the side navigation drawer open/closed state.
+     */
+    public static function toggle(): void
+    {
+        if (function_exists('nativephp_call')) {
+            nativephp_call('Navigation.ToggleSidebar', '{}');
+        }
+    }
 }
