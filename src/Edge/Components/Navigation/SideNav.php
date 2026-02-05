@@ -30,9 +30,7 @@ class SideNav extends EdgeComponent
      */
     public static function open(): void
     {
-        ray('33: SideNav.php');
         if (function_exists('nativephp_call')) {
-            ray('35: SideNav.php');
             nativephp_call('Navigation.OpenSidebar', '{}');
         }
     }
