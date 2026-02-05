@@ -43,7 +43,8 @@ data class BottomNavItemComponent(
 data class BottomNavItem(
     val id: String,
     val label: String,
-    val url: String,
+    val url: String? = null,
+    val action: String? = null,
     val icon: String,
     val active: Boolean? = false,
     val badge: String? = null,

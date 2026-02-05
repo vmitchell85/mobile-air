@@ -66,7 +66,8 @@ struct BottomNavItemComponent: Codable, Equatable {
 struct BottomNavItem: Codable, Equatable {
     let id: String
     let label: String
-    let url: String
+    let url: String?
+    let action: String?
     let icon: String
     let active: Bool?
     let badge: String?
@@ -74,7 +75,7 @@ struct BottomNavItem: Codable, Equatable {
     let news: Bool?
 
     enum CodingKeys: String, CodingKey {
-        case id, label, url, icon, active, badge, news
+        case id, label, url, action, icon, active, badge, news
         case badgeColor = "badge_color"
     }
 }

@@ -343,7 +343,7 @@ struct NativeBottomNavigation: View {
         }
     }
 
-    /// Load URL for a specific tab by finding the item and passing its raw URL
+    /// Load URL for a specific tab by finding the item and handling either URL or action
     private func loadTabURL(tabId: String) {
         guard let bottomNavData = uiState.bottomNavData,
               let items = bottomNavData.children,
@@ -352,6 +352,23 @@ struct NativeBottomNavigation: View {
             return
         }
 
-        onTabSelected(item.data.url)
+        // Check if this item has an action instead of a URL
+        if let action = item.data.action, !action.isEmpty {
+            // Dispatch the BottomNavItemClicked event to PHP
+            let eventData: [String: Any?] = [
+                "id": item.data.id,
+                "action": action,
+                "label": item.data.label
+            ]
+
+            // Send event to PHP via the Laravel bridge
+            LaravelBridge.shared.send?(
+                "Native\\Mobile\\Events\\Navigation\\BottomNavItemClicked",
+                eventData
+            )
+        } else if let url = item.data.url {
+            // Handle regular URL navigation
+            onTabSelected(url)
+        }
     }
 }

@@ -6,6 +6,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import android.graphics.Color as AndroidColor
+import androidx.compose.ui.platform.LocalContext
 import android.util.Log
 
 private const val TAG = "NativeBottomNav"
@@ -84,10 +85,27 @@ fun NativeBottomNavigation(
                     NavigationBarItemDefaults.colors()
                 },
                 onClick = {
-                    Log.d(TAG, "🖱️ Nav item clicked: ${item.label} -> ${item.url}")
-                    // Optimistically update active state to prevent flash
-                    NativeUIState.setBottomNavActiveOptimistic(item.url)
-                    onNavigate(item.url)
+                    Log.d(TAG, "🖱️ Nav item clicked: ${item.label} -> ${item.url ?: item.action}")
+
+                    // Check if this item has an action instead of a URL
+                    if (!item.action.isNullOrEmpty()) {
+                        // Dispatch the BottomNavItemClicked event to PHP
+                        val eventData = mapOf(
+                            "id" to item.id,
+                            "action" to item.action,
+                            "label" to item.label
+                        )
+
+                        com.nativephp.mobile.utils.NativeActionCoordinator.dispatchEvent(
+                            LocalContext.current as androidx.fragment.app.FragmentActivity,
+                            "Native\\Mobile\\Events\\Navigation\\BottomNavItemClicked",
+                            com.google.gson.Gson().toJson(eventData)
+                        )
+                    } else if (!item.url.isNullOrEmpty()) {
+                        // Optimistically update active state to prevent flash
+                        NativeUIState.setBottomNavActiveOptimistic(item.url)
+                        onNavigate(item.url)
+                    }
                 }
             )
         }
