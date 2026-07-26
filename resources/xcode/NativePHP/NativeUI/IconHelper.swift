@@ -78,7 +78,7 @@ private func getManualMapping(_ iconName: String) -> String? {
 
     // Actions
     case "add", "plus":
-        return "plus.circle.fill"
+        return "plus"
     case "edit":
         return "pencil"
     case "delete":
